@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>George Kaimoottil · Data Center Inventory & Asset Technician · Microsoft DIAT Application</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --bg: #f5f3ef;
+    --accent: #ff4d00;
+    --accent2: #0047ff;
+    --muted: #6b6560;
+    --rule: #d4cfc9;
+    --card: #edeae4;
+    --code: #0a0a0a;
+    --ms-blue: #0078d4;
+    --ms-green: #107c10;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    height: 52px;
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 50px 70px;
+    position: relative;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,77,0,0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,77,0,0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.6;
+  }
+  .hero-ticker {
+    position: absolute;
+    top: 52px;
+    left: 0; right: 0;
+    background: var(--accent);
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .hero-ticker-inner {
+    display: inline-block;
+    animation: ticker 22s linear infinite;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hero-meta .pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+  }
+  .hero-meta .pill.live {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .hero-meta .pill.ms {
+    background: var(--ms-blue);
+    border-color: var(--ms-blue);
+    color: #fff;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    right: 50px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scroll-hint::before {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: rgba(255,77,0,0.5);
+  }
+
+  /* SECTION */
+  .section { padding: 80px 50px; }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 40px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 16px;
+  }
+
+  /* METRICS */
+  .metrics {
+    background: var(--ink);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background-color: #2a2a2a;
+  }
+  .metric-item {
+    background: var(--ink);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .metric-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 2.8rem;
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .metric-desc {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* JD MATCH SECTION */
+  .jd-match {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: #2a2a2a;
+    margin-bottom: 40px;
+  }
+  .jd-pane {
+    background: var(--code);
+    padding: 28px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.9;
+    overflow-x: auto;
+  }
+  .jd-pane .pane-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1f2937;
+  }
+  .jd-pane .k { color: #7dd3fc; }
+  .jd-pane .s { color: #fde68a; }
+  .jd-pane .v { color: #c8f5a0; }
+  .jd-pane .c { color: #4b5563; }
+  .jd-pane .tick { color: #4ade80; }
+  .jd-pane .e { color: #f87171; }
+
+  /* CERTS GRID */
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--bg);
+    margin-bottom: 0;
+  }
+  .cert-card {
+    background: var(--bg);
+    padding: 24px 20px;
+    transition: background 0.2s;
+  }
+  .cert-card:hover { background: var(--card); }
+  .cert-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .cert-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .cert-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.4; }
+  .cert-badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    padding: 2px 8px;
+    background: var(--ink);
+    color: #4ade80;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+  .cert-badge.preferred { background: var(--accent); color: #fff; }
+
+  /* EXPERIENCE TIMELINE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--rule);
+  }
+  .tl-item {
+    padding-left: 28px;
+    margin-bottom: 48px;
+    position: relative;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+  }
+  .tl-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tl-role { font-size: 1.1rem; font-weight: 700; margin-bottom: 2px; }
+  .tl-co { font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+  .tl-dept {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 3px 10px;
+    border: 1px solid rgba(0,71,255,0.35);
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .tl-points { list-style: none; }
+  .tl-points li {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+    color: #3a3a3a;
+  }
+  .tl-points li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 0.8rem;
+  }
+  .tl-points li strong { color: var(--ink); }
+  .tl-win {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-left: 3px solid #4ade80;
+    background: rgba(74,222,128,0.06);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: #166534;
+    letter-spacing: 0.04em;
+  }
+
+  /* SKILLS */
+  .skills-matrix {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .skill-group h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .stag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    padding: 4px 9px;
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    transition: all 0.15s;
+    cursor: default;
+  }
+  .stag:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .stag.hot { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .stag.core { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  /* SELECTIVE */
+  .select-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: #2a2a2a;
+  }
+  .select-card {
+    background: var(--bg);
+    padding: 28px 24px;
+    transition: background 0.2s;
+  }
+  .select-card:hover { background: var(--card); }
+  .select-org {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    display: block;
+  }
+  .select-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+  .select-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--ink);
+    padding: 80px 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .contact-section h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #fff;
+    line-height: 1.1;
+  }
+  .contact-section h2 span { color: var(--accent); }
+  .contact-links { display: flex; flex-direction: column; gap: 14px; }
+  .c-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid #2a2a2a;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .c-link:hover { border-color: var(--accent); background: rgba(255,77,0,0.05); }
+  .c-link .c-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #4b5563;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .c-link .c-val { font-size: 0.88rem; color: #fff; font-weight: 600; }
+
+  footer {
+    background: var(--ink);
+    border-top: 1px solid #1f2937;
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: #4b5563;
+    letter-spacing: 0.06em;
+  }
+  footer p span { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 20px 50px; }
+    .section { padding: 60px 20px; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .jd-match { grid-template-columns: 1fr; }
+    .cert-grid { grid-template-columns: repeat(2, 1fr); }
+    .skills-matrix { grid-template-columns: 1fr; }
+    .select-grid { grid-template-columns: 1fr; }
+    .contact-section { grid-template-columns: 1fr; padding: 60px 20px; }
+    footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">George <span>Kaimoottil</span></div>
+  <div class="nav-links">
+    <a href="#match">Role Match</a>
+    <a href="#experience">Experience</a>
+    <a href="#certifications">Certifications</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-ticker">
+    <div class="hero-ticker-inner">
+      AWS CCP · Azure AZ-900 · BSC · ITIL · CompTIA A+ · Inventory & Asset Management · Cycle Audits · RMA Coordination · Logistics Operations · Data Bearing Device Destruction · Vendor Escort · Zero Disruption Recovery · Dubai UAE · Residency Visa · Immediate Start &nbsp;&nbsp; AWS CCP · Azure AZ-900 · BSC · ITIL · CompTIA A+ · Inventory & Asset Management · Cycle Audits · RMA Coordination · Logistics Operations · Data Bearing Device Destruction · Vendor Escort · Zero Disruption Recovery · Dubai UAE · Residency Visa · Immediate Start &nbsp;&nbsp;
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-kicker">Data Center Inventory &amp; Asset Technician · Microsoft CO+I · Job No. 200032886</div>
+    <h1>George<br><em>Kaimoottil</em><br>DIAT.<br>Ready.</h1>
+    <div class="hero-meta">
+      <span class="pill live">● Available Now</span>
+      <span class="pill ms">Microsoft CO+I DIAT Applicant</span>
+      <span class="pill">Dubai, UAE</span>
+      <span class="pill">Residency Visa</span>
+      <span class="pill">5 Active Certs</span>
+      <span class="pill">B.Tech CSE — IIIT</span>
+    </div>
+  </div>
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- METRICS -->
+<div class="metrics">
+  <div class="metric-item">
+    <div class="metric-num">2</div>
+    <div class="metric-desc">Simultaneous Live<br>Production Roles</div>
+  </div>
+  <div class="metric-item">
+    <div class="metric-num">500+</div>
+    <div class="metric-desc">Live Records Recovered<br>Zero Service Disruption</div>
+  </div>
+  <div class="metric-item">
+    <div class="metric-num">7×</div>
+    <div class="metric-desc">System Performance<br>Improvement Delivered</div>
+  </div>
+  <div class="metric-item">
+    <div class="metric-num">6</div>
+    <div class="metric-desc">Active Certifications<br>All DIAT-Relevant</div>
+  </div>
+</div>
+
+<!-- JD MATCH -->
+<section class="section" id="match">
+  <div class="section-label">Role Alignment</div>
+  <div class="section-title">Every Responsibility,<br>Already Performed.</div>
+
+  <p style="font-size:0.92rem; color: var(--muted); max-width:640px; margin-bottom:32px; line-height:1.65;">
+    The Microsoft DIAT job description maps directly to live daily work across two simultaneous roles in UAE and Saudi Arabia. Inventory management, cycle audits, RMA coordination, logistics, and vendor compliance — this is not skill development. It is evidence of existing, production-proven capability.
+  </p>
+
+  <div class="jd-match">
+    <div class="jd-pane">
+      <div class="pane-label">Microsoft DCT — Job Description Requirements</div>
+<span class="c">// Required DIAT Responsibilities</span>
+{
+  <span class="k">"cycle_audits"</span>: <span class="s">"Perform cycle audits and ensure accurate</span>
+<span class="s">    logical information in IAM systems</span>
+<span class="s">    (CMDBs, asset management repositories)"</span>,
+
+  <span class="k">"inbound_outbound"</span>: <span class="s">"Execute incoming/outgoing deliveries,</span>
+<span class="s">    document and reconcile inventory,</span>
+<span class="s">    report discrepancies to management"</span>,
+
+  <span class="k">"rma_warranty"</span>: <span class="s">"Coordinate RMA warranty claim process:</span>
+<span class="s">    info processing, packaging, shipment,</span>
+<span class="s">    receipt of return per vendor SLAs"</span>,
+
+  <span class="k">"dbd_destruction"</span>: <span class="s">"Destruction of data bearing devices</span>
+<span class="s">    following SLAs and Microsoft policies"</span>,
+
+  <span class="k">"vendor_escort"</span>: <span class="s">"Coordinate security escorts for</span>
+<span class="s">    third-party vendors — compliance adherence"</span>,
+
+  <span class="k">"preferred_certs"</span>: [
+    <span class="s">"Warehouse/supply chain IT experience"</span>,
+    <span class="s">"Heavy-load equipment (forklift, pallet jacks)"</span>
+  ]
+}
+    </div>
+    <div class="jd-pane">
+      <div class="pane-label">George Kaimoottil — Live Evidence Mapping</div>
+<span class="c">// Confirmed: performing all in production</span>
+{
+  <span class="k">"cycle_audits"</span>: <span class="tick">✓</span> <span class="v">DAILY — Reach Group + Emdad</span>
+  <span class="c">  // Physical-to-logical inventory reconciliation,</span>
+  <span class="c">  // IAM system records, asset tracking</span>
+  <span class="c">  // UAE + KSA enterprise &amp; govt clients</span>
+
+  <span class="k">"inbound_outbound"</span>: <span class="tick">✓</span> <span class="v">DAILY — Reach Group</span>
+  <span class="c">  // Delivery receipt verification, staging,</span>
+  <span class="c">  // discrepancy reporting, dispatch coordination</span>
+  <span class="c">  // structured against deployment standards</span>
+
+  <span class="k">"rma_warranty"</span>: <span class="tick">✓</span> <span class="v">BOTH ROLES — ongoing</span>
+  <span class="c">  // End-to-end RMA: processing, packaging,</span>
+  <span class="c">  // shipment, return receipt per SLA</span>
+  <span class="c">  // Vendor SLA compliance maintained</span>
+
+  <span class="k">"dbd_destruction"</span>: <span class="tick">✓</span> <span class="v">PROVEN — Emdad recovery</span>
+  <span class="c">  // Policy-compliant handling during full</span>
+  <span class="c">  // 500+ record decommission, zero data breach</span>
+
+  <span class="k">"vendor_escort"</span>: <span class="tick">✓</span> <span class="v">BOTH ROLES</span>
+  <span class="c">  // Third-party coordination, access management,</span>
+  <span class="c">  // security compliance for govt &amp; enterprise</span>
+
+  <span class="k">"preferred_certs"</span>: <span class="tick">✓ ALL HELD</span>
+  <span class="c">  // BSC + CompTIA A+/Net+/Server+ + AWS CCP</span>
+  <span class="c">  // + Azure AZ-900 + ITIL + Google IT</span>
+}
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="section" id="experience" style="background: var(--card);">
+  <div class="section-label">Career Track</div>
+  <div class="section-title">Experience</div>
+  <div class="timeline">
+
+    <div class="tl-item">
+      <div class="tl-date">May 2025 – Present</div>
+      <div class="tl-role">IT Support Engineer — Inventory, Asset & Logistics Operations</div>
+      <div class="tl-co">Reach Group · Dubai, UAE · Full-Time</div>
+      <div class="tl-dept">IT Department · UAE &amp; KSA Government &amp; Enterprise Clients</div>
+      <ul class="tl-points">
+        <li><strong>Inventory &amp; asset tracking</strong> — maintained accurate physical and logical hardware asset records for enterprise and government clients; verified staging, labelling, and cabling against acceptance criteria before sign-off</li>
+        <li><strong>Inbound/outbound hardware logistics</strong> — coordinated receipt, staging, and dispatch of server and network hardware; tracked all inbound deliveries and ensured physical inventory matched system records</li>
+        <li><strong>RMA &amp; warranty coordination</strong> — initiated and managed warranty claim processes for failed hardware; information processing, packaging, shipment coordination, and return receipt confirmation following vendor SLAs</li>
+        <li><strong>Post-deployment quality verification</strong> — systematic checks on hardware configs, network connectivity, and data integrity; all changes met defined standards before handover</li>
+        <li><strong>Discrepancy reporting &amp; escalation</strong> — all incidents and asset movements documented; discrepancies escalated through correct management path with structured written evidence</li>
+        <li><strong>Vendor &amp; third-party coordination</strong> — managed access, compliance, and security escort procedures for external vendors on government and enterprise sites</li>
+      </ul>
+      <div class="tl-win">OUTCOME: 7× system performance improvement + 40% reporting overhead reduction for UAE government client through infrastructure re-architecture</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Oct 2025 – Present</div>
+      <div class="tl-role">IT Support Engineer — Government Asset Management & Infrastructure</div>
+      <div class="tl-co">Emdad Human Resources Company · Riyadh, KSA · Full-Time</div>
+      <div class="tl-dept">IT Department · Saudi Government Entities — Asset Management &amp; Infrastructure Operations</div>
+      <ul class="tl-points">
+        <li><strong>Critical asset inventory recovery</strong> — sole technician on live Saudi government infrastructure failure with 500+ active asset records, zero existing documentation, zero service disruption SLA</li>
+        <li><strong>Hardware decommission, asset reconciliation &amp; rebuild</strong> — reconciled complete physical inventory against corrupted logical records; full decommission and rebuild in six weeks with zero data loss or service disruption</li>
+        <li><strong>Data bearing device handling</strong> — policy-compliant DBD processing throughout decommission; all device destruction and handling followed security SLAs with full audit trail</li>
+        <li><strong>SOP &amp; runbook authoring</strong> — authored inventory management SOPs and monitoring runbooks from scratch; adopted across the operational team to maintain ongoing audit readiness</li>
+        <li><strong>Inventory discrepancy reporting</strong> — identified and escalated all discrepancies between physical assets and system records; established reconciliation procedures to prevent recurrence</li>
+        <li><strong>Peer guidance</strong> — technical training to junior team members on inventory procedures, asset tracking, and escalation protocols</li>
+      </ul>
+      <div class="tl-win">OUTCOME: 500+ asset records reconciled from zero documentation baseline — full government system recovery as sole technician, zero service disruption</div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-date">Jun 2024 – Apr 2025</div>
+      <div class="tl-role">AI Systems Engineer Intern</div>
+      <div class="tl-co">Maura · MIT-Founded AI Startup · UAE (Hybrid)</div>
+      <ul class="tl-points">
+        <li>Built and maintained production data infrastructure pipelines with full ownership of deliverables</li>
+        <li>Cross-functional collaboration across engineering and product teams in a US-headquartered environment</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section class="section" id="certifications">
+  <div class="section-label">Qualifications</div>
+  <div class="section-title">Certifications —<br>All Active</div>
+  <p style="font-size:0.88rem; color: var(--muted); max-width:600px; margin-bottom:32px; line-height:1.65;">
+    Six active certifications spanning cloud infrastructure, IT service management, structured cabling, hardware operations, and logistics — all directly relevant to data center inventory and asset technician operations.
+  </p>
+  <div class="cert-grid">
+    <div class="cert-card">
+      <span class="cert-org">BSC</span>
+      <div class="cert-name">Basic Structured Cabling</div>
+      <div class="cert-desc">Physical cabling, grounding standards, and labeling — the exact skill for DCT post-execution quality checks</div>
+      <span class="cert-badge preferred">DCT Preferred</span>
+    </div>
+    <div class="cert-card">
+      <span class="cert-org">Amazon Web Services</span>
+      <div class="cert-name">AWS Cloud Practitioner</div>
+      <div class="cert-desc">Cloud infrastructure and architecture — contextualizes the physical layer of services DCT infrastructure supports</div>
+      <span class="cert-badge">Active · Feb 2024</span>
+    </div>
+    <div class="cert-card">
+      <span class="cert-org">Microsoft</span>
+      <div class="cert-name">Azure Fundamentals AZ-900</div>
+      <div class="cert-desc">Microsoft cloud services and CO+I infrastructure context — directly relevant to Azure platform operations and data center infrastructure</div>
+      <span class="cert-badge">Active</span>
+    </div>
+    <div class="cert-card">
+      <span class="cert-org">AXELOS</span>
+      <div class="cert-name">ITIL Foundation</div>
+      <div class="cert-desc">IT service management, incident lifecycle, and change management — directly maps to DCT escalation and reporting procedures</div>
+      <span class="cert-badge">Active</span>
+    </div>
+    <div class="cert-card">
+      <span class="cert-org">Google</span>
+      <div class="cert-name">IT Support Certificate</div>
+      <div class="cert-desc">End-to-end IT support fundamentals — reinforces hardware, OS, networking, and troubleshooting competency</div>
+      <span class="cert-badge">Active</span>
+    </div>
+    <div class="cert-card">
+      <span class="cert-org">CompTIA</span>
+      <div class="cert-name">A+ / Network+ / Server+</div>
+      <div class="cert-desc">Hardware, networking and server operations — covers physical asset handling, diagnostics, and infrastructure competency aligned with DIAT responsibilities</div>
+      <span class="cert-badge preferred">DIAT Relevant</span>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="section" id="skills" style="background: var(--card);">
+  <div class="section-label">Capabilities</div>
+  <div class="section-title">Skills Matrix</div>
+  <div class="skills-matrix">
+    <div class="skill-group">
+      <h3>Inventory &amp; Asset Management</h3>
+      <div class="skill-tags">
+        <span class="stag hot">Cycle Audits</span>
+        <span class="stag hot">Physical-Logical Reconciliation</span>
+        <span class="stag hot">IAM Systems (CMDB)</span>
+        <span class="stag hot">Asset Record Maintenance</span>
+        <span class="stag hot">Discrepancy Reporting</span>
+        <span class="stag hot">Inventory Staging</span>
+        <span class="stag core">Labeling Standards</span>
+        <span class="stag core">500+ Record Recovery</span>
+        <span class="stag">Stock Level Monitoring</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <h3>Logistics &amp; Delivery Operations</h3>
+      <div class="skill-tags">
+        <span class="stag hot">Inbound/Outbound Delivery</span>
+        <span class="stag hot">RMA Coordination (End-to-End)</span>
+        <span class="stag hot">Warranty Process Management</span>
+        <span class="stag hot">Hardware Packaging &amp; Shipment</span>
+        <span class="stag hot">Vendor Escort Coordination</span>
+        <span class="stag core">Return Receipt Verification</span>
+        <span class="stag core">SLA Compliance</span>
+        <span class="stag">Third-Party Access Management</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <h3>Compliance &amp; Data Security</h3>
+      <div class="skill-tags">
+        <span class="stag hot">Data Bearing Device (DBD) Destruction</span>
+        <span class="stag hot">Security Policy Compliance</span>
+        <span class="stag hot">SOP-Driven Execution</span>
+        <span class="stag hot">Audit Trail Documentation</span>
+        <span class="stag core">Zero-Disruption Protocols</span>
+        <span class="stag core">Data Integrity Verification</span>
+        <span class="stag">ITIL Incident Management</span>
+        <span class="stag">Change Records</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <h3>Systems &amp; Cloud Context</h3>
+      <div class="skill-tags">
+        <span class="stag hot">AWS (Certified CCP)</span>
+        <span class="stag hot">Azure (Certified AZ-900)</span>
+        <span class="stag hot">Windows Server / Linux</span>
+        <span class="stag hot">Structured Cabling (BSC)</span>
+        <span class="stag core">CompTIA A+ / Net+ / Server+</span>
+        <span class="stag core">Hardware Component Handling</span>
+        <span class="stag">Infrastructure Monitoring</span>
+        <span class="stag">Technical Documentation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTIVE PROGRAMMES -->
+<section class="section" id="selective">
+  <div class="section-label">Growth Mindset · Selective Admissions</div>
+  <div class="section-title">Programmes &<br>Achievements</div>
+  <div class="select-grid">
+    <div class="select-card">
+      <span class="select-org">McKinsey &amp; Company</span>
+      <h3>Forward Programme 2025</h3>
+      <p>Selected from worldwide candidates on analytical capability and growth mindset — McKinsey's competitive leadership and problem-solving programme.</p>
+    </div>
+    <div class="select-card">
+      <span class="select-org">University of Oxford</span>
+      <h3>OxML Summer School 2025</h3>
+      <p>Accepted to Oxford's competitive machine learning summer school from worldwide applicants — rigorous analytical and technical programme.</p>
+    </div>
+    <div class="select-card">
+      <span class="select-org">Harvard University</span>
+      <h3>HPAIR Delegate 2025</h3>
+      <p>Selected as Harvard Project for Asian and International Relations delegate — global cohort selected on leadership and academic merit.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section class="section" style="background: var(--card); padding-top: 0; padding-bottom: 80px;">
+  <div class="section-label">Academic Foundation</div>
+  <div class="section-title">Education</div>
+  <div style="padding-left: 28px; border-left: 2px solid var(--rule);">
+    <div class="tl-date">2021 – 2025</div>
+    <div class="tl-role">B.Tech, Computer Science &amp; Engineering</div>
+    <div class="tl-co">Indian Institute of Information Technology Kottayam</div>
+    <div style="margin-top: 12px;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.06em; line-height: 1.9;">
+        Computer Architecture &nbsp;·&nbsp; Operating Systems &nbsp;·&nbsp; Networks &nbsp;·&nbsp; Data Structures &nbsp;·&nbsp; Systems Design &nbsp;·&nbsp; Cryptography &nbsp;·&nbsp; Database Systems
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section" id="contact">
+  <div>
+    <h2>Every<br><span>Inventory Task.</span><br>Already Done.</h2>
+    <p style="color:#9ca3af; font-size:0.85rem; margin-top:20px; line-height:1.6; max-width:380px;">
+      Dubai-based, Residency Visa, immediate start. The Microsoft DIAT role is not a career pivot — it is the same inventory management, asset tracking, and logistics operations I perform daily, at the scale of Microsoft CO+I.
+    </p>
+  </div>
+  <div class="contact-links">
+    <a class="c-link" href="mailto:georgevjr03@gmail.com">
+      <div>
+        <span class="c-label">Email</span>
+        <span class="c-val">georgevjr03@gmail.com</span>
+      </div>
+    </a>
+    <a class="c-link" href="tel:+971509382514">
+      <div>
+        <span class="c-label">Phone · WhatsApp</span>
+        <span class="c-val">+971 50 938 2514</span>
+      </div>
+    </a>
+    <a class="c-link" href="https://github.com/georgevjr03" target="_blank">
+      <div>
+        <span class="c-label">GitHub</span>
+        <span class="c-val">github.com/georgevjr03</span>
+      </div>
+    </a>
+    <a class="c-link" href="#">
+      <div>
+        <span class="c-label">Location &amp; Availability</span>
+        <span class="c-val">Dubai, UAE — Residency Visa — Immediate Start</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <p>George Varughese Kaimoottil · <span>Microsoft CO+I DIAT Application</span> · Job No. 200032886</p>
+</footer>
+</body>
+</html>
